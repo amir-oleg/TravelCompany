@@ -25,16 +25,10 @@ namespace TravelCompanyDAL
         public virtual DbSet<Tour> Tours { get; set; } = null!;
         public virtual DbSet<Trip> Trips { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=BULL-PC\\SQLEXPRESS;Database=TravelCompanyClassic;Trusted_Connection=True;");
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Accomodation>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
