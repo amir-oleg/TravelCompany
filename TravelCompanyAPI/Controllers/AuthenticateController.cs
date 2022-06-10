@@ -32,7 +32,10 @@ public class AuthenticateController : ControllerBase
     [Route("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
-        var user = await _userManager.FindByNameAsync(model.Username);
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        await _roleManager.CreateAsync(new IdentityRole(UserRoles.Manager));
+        await _userManager.AddToRoleAsync(user, UserRoles.Manager);
+        
         if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password)) 
             return Unauthorized();
 
@@ -40,7 +43,7 @@ public class AuthenticateController : ControllerBase
 
         var authClaims = new List<Claim>
         {
-            new(ClaimTypes.Name, user.UserName),
+            new(ClaimTypes.Email, user.Email),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
@@ -59,37 +62,49 @@ public class AuthenticateController : ControllerBase
     [Route("register")]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
-        var userExists = await _userManager.FindByNameAsync(model.Username);
+        var userExists = await _userManager.FindByEmailAsync(model.Email);
         if (userExists != null)
             return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
         IdentityUser user = new()
         {
             Email = model.Email,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            UserName = model.Username
+            UserName = "User" + Guid.NewGuid(),
+            SecurityStamp = Guid.NewGuid().ToString()
         };
+
         var result = await _userManager.CreateAsync(user, model.Password);
-        return !result.Succeeded
-            ? StatusCode(StatusCodes.Status500InternalServerError,
+
+        if (!result.Succeeded)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError,
                 new Response
-                    { Status = "Error", Message = "User creation failed! Please check user details and try again." })
-            : Ok(new Response { Status = "Success", Message = "User created successfully!" });
+                    { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+        }
+
+        if (await _roleManager.RoleExistsAsync(UserRoles.User))
+            await _userManager.AddToRoleAsync(user, UserRoles.User);
+        else
+        {
+            await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+            await _userManager.AddToRoleAsync(user, UserRoles.User);
+        }
+
+        return Ok(new Response { Status = "Success", Message = "User created successfully!" });
     }
 
     [HttpPost]
     [Route("register-manager")]
     public async Task<IActionResult> RegisterManager([FromBody] RegisterModel model)
     {
-        var userExists = await _userManager.FindByNameAsync(model.Username);
+        var userExists = await _userManager.FindByNameAsync(model.Email);
         if (userExists != null)
             return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
         IdentityUser user = new()
         {
             Email = model.Email,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            UserName = model.Username
+            SecurityStamp = Guid.NewGuid().ToString()
         };
         var result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded)
@@ -103,13 +118,11 @@ public class AuthenticateController : ControllerBase
             await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
 
         if (await _roleManager.RoleExistsAsync(UserRoles.Manager))
-        {
             await _userManager.AddToRoleAsync(user, UserRoles.Manager);
-        }
-        if (await _roleManager.RoleExistsAsync(UserRoles.Manager))
-        {
+        
+        if (await _roleManager.RoleExistsAsync(UserRoles.User))
             await _userManager.AddToRoleAsync(user, UserRoles.User);
-        }
+
         return Ok(new Response { Status = "Success", Message = "User created successfully!" });
     }
 
@@ -120,7 +133,7 @@ public class AuthenticateController : ControllerBase
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],
             audience: _configuration["JWT:ValidAudience"],
-            expires: DateTime.Now.AddHours(3),
+            expires: DateTime.Now.AddHours(24),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );

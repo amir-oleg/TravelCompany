@@ -1,16 +1,16 @@
 ﻿using MediatR;
+using TravelCompanyAPI.Application.Responses;
 
-namespace TravelCompanyAPI.Application.Commands
+namespace TravelCompanyAPI.Application.Commands;
+
+public class GetAccomodationRequest: IRequest<GetAccomodationInHotelResponse>
 {
-    public class GetAccomodationRequest: IRequest<GetAccomodationInHotelResponse>
+    public GetAccomodationRequest(int hotelId, int accomodationId)
     {
-        public GetAccomodationRequest(int hotelId, int accomodationId)
-        {
-            HotelId = hotelId;
-            AccomodationId = accomodationId;
-        }
-
-        public int HotelId { get; set; }
-        public int AccomodationId { get; set; }
+        HotelId = hotelId;
+        AccomodationId = accomodationId;
     }
+
+    public int HotelId { get; set; }
+    public int AccomodationId { get; set; }
 }

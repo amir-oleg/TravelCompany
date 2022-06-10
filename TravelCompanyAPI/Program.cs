@@ -42,7 +42,16 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
         };
     });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy",
+        builder =>
+            builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
 
+    );
+});
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -63,6 +72,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors("CorsPolicy");
 
 app.MapControllers();
 

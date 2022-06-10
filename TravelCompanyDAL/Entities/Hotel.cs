@@ -15,8 +15,10 @@ namespace TravelCompanyDAL.Entities
         public int CountOfStars { get; set; }
         public int City { get; set; }
         public string TypeOfAccommodation { get; set; } = null!;
+        public int? PreviewImage { get; set; }
 
         public virtual City CityNavigation { get; set; } = null!;
+        public virtual Image? PreviewImageNavigation { get; set; }
         public virtual ICollection<Accomodation> Accomodations { get; set; }
     }
 }

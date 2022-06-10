@@ -2,16 +2,15 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace TravelCompanyDAL
+namespace TravelCompanyDAL;
+
+public class AuthDbContext : IdentityDbContext<IdentityUser>
 {
-    public class AuthDbContext : IdentityDbContext<IdentityUser>
+    public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
     {
-        public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
-        {
-        }
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-        }
+    }
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
     }
 }

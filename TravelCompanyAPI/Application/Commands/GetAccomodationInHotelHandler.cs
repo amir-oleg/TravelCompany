@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using TravelCompanyAPI.Application.Responses;
 using TravelCompanyDAL;
 
 namespace TravelCompanyAPI.Application.Commands
@@ -21,11 +22,11 @@ namespace TravelCompanyAPI.Application.Commands
                 .FirstOrDefaultAsync(cancellationToken);
 
             return accomodation == null
-                ? null
+                ? (GetAccomodationInHotelResponse)null
                 : new GetAccomodationInHotelResponse
                 {
                     Capacity = accomodation.Capacity,
-                    CountOfStars = accomodation.CountOfStars,
+                    Name = accomodation.Name,
                     Services = accomodation.Services.Select(services => services.Name).ToList()
                 };
         }
