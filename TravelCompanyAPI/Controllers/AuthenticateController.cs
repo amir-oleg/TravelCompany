@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TravelCompanyAPI.Application.Models;
 using TravelCompanyAPI.Application.Responses;
+using TravelCompanyDAL;
 using TravelCompanyDAL.Entities;
 
 namespace TravelCompanyAPI.Controllers;
@@ -16,15 +17,18 @@ public class AuthenticateController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly TravelCompanyClassicContext _context;
     private readonly IConfiguration _configuration;
 
     public AuthenticateController(
-        UserManager<IdentityUser> userManager,
+        UserManager<IdentityUser> userManager, 
         RoleManager<IdentityRole> roleManager,
+        TravelCompanyClassicContext contextClassic, 
         IConfiguration configuration)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _context = contextClassic;
         _configuration = configuration;
     }
 
@@ -33,8 +37,6 @@ public class AuthenticateController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
-        await _roleManager.CreateAsync(new IdentityRole(UserRoles.Manager));
-        await _userManager.AddToRoleAsync(user, UserRoles.Manager);
         
         if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password)) 
             return Unauthorized();
@@ -60,7 +62,7 @@ public class AuthenticateController : ControllerBase
 
     [HttpPost]
     [Route("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterModel model)
+    public async Task<IActionResult> Register([FromBody] RegisterModel model, CancellationToken cancellationToken)
     {
         var userExists = await _userManager.FindByEmailAsync(model.Email);
         if (userExists != null)
@@ -90,12 +92,23 @@ public class AuthenticateController : ControllerBase
             await _userManager.AddToRoleAsync(user, UserRoles.User);
         }
 
+        _context.Clients.Add(new Client()
+        {
+            Phone = model.PhoneNumber,
+            Email = model.Email,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            Patronymic = model.Patronymic
+        });
+
+        await _context.SaveChangesAsync(cancellationToken);
+
         return Ok(new Response { Status = "Success", Message = "User created successfully!" });
     }
 
     [HttpPost]
     [Route("register-manager")]
-    public async Task<IActionResult> RegisterManager([FromBody] RegisterModel model)
+    public async Task<IActionResult> RegisterManager([FromBody] RegisterModel model, CancellationToken cancellationToken)
     {
         var userExists = await _userManager.FindByNameAsync(model.Email);
         if (userExists != null)
@@ -104,8 +117,10 @@ public class AuthenticateController : ControllerBase
         IdentityUser user = new()
         {
             Email = model.Email,
+            UserName = "User" + Guid.NewGuid(),
             SecurityStamp = Guid.NewGuid().ToString()
         };
+
         var result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded)
             return StatusCode(StatusCodes.Status500InternalServerError,
@@ -114,17 +129,60 @@ public class AuthenticateController : ControllerBase
 
         if (!await _roleManager.RoleExistsAsync(UserRoles.Manager))
             await _roleManager.CreateAsync(new IdentityRole(UserRoles.Manager));
-        if (!await _roleManager.RoleExistsAsync(UserRoles.User))
-            await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
 
         if (await _roleManager.RoleExistsAsync(UserRoles.Manager))
             await _userManager.AddToRoleAsync(user, UserRoles.Manager);
         
-        if (await _roleManager.RoleExistsAsync(UserRoles.User))
-            await _userManager.AddToRoleAsync(user, UserRoles.User);
+
+        _context.Employees.Add(new Employee
+        {
+            ContactPhone = model.PhoneNumber,
+            Email = model.Email,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            Patronymic = model.Patronymic,
+            Address = "someAddress",
+            BirthDate = new DateTime(1990, 1, 1),
+            Position = "Manager"
+        });
+
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Ok(new Response { Status = "Success", Message = "User created successfully!" });
     }
+
+    [HttpPost]
+    [Route("register-admin")]
+    public async Task<IActionResult> RegisterAdmin([FromBody] AuthenticateModel model,
+        CancellationToken cancellationToken)
+    {
+        var userExists = await _userManager.FindByNameAsync(model.Email);
+        if (userExists != null)
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new Response { Status = "Error", Message = "User already exists!" });
+
+        IdentityUser user = new()
+        {
+            Email = model.Email,
+            UserName = "User" + Guid.NewGuid(),
+            SecurityStamp = Guid.NewGuid().ToString()
+        };
+
+        var result = await _userManager.CreateAsync(user, model.Password);
+        if (!result.Succeeded)
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new Response
+                    { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+
+        if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+            await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+
+        if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+
+        return Ok();
+    }
+
 
     private JwtSecurityToken GetToken(List<Claim> authClaims)
     {

@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TravelCompanyDAL.Entities
+namespace TravelCompanyDAL.Entities;
+
+public partial class Service
 {
-    public partial class Service
+    public Service()
     {
-        public Service()
-        {
-            Accomadations = new HashSet<Accomodation>();
-            Tours = new HashSet<Tour>();
-        }
-
-        public int Id { get; set; }
-        public string Name { get; set; } = null!;
-
-        public virtual ICollection<Accomodation> Accomadations { get; set; }
-        public virtual ICollection<Tour> Tours { get; set; }
+        Accomadations = new HashSet<Accomodation>();
+        Hotels = new HashSet<Hotel>();
     }
+
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+
+    public virtual ICollection<Accomodation> Accomadations { get; set; }
+    public virtual ICollection<Hotel> Hotels { get; set; }
 }

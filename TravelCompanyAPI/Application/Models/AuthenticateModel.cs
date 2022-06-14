@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TravelCompanyAPI.Application.Models
-{
-    public class AuthenticateModel
-    {
-        [Required]
-        public string Email { get; set; }
+namespace TravelCompanyAPI.Application.Models;
 
-        [Required]
-        public string Password { get; set; }
-    }
+public class AuthenticateModel
+{
+    [Required]
+    public string Email { get; set; }
+
+    [Required]
+    public string Password { get; set; }
 }

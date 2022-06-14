@@ -19,11 +19,11 @@ public class GetAccomodationsHandler: IRequestHandler<GetAccomodationsRequest, G
     {
         var hotels = await _context.Hotels.Include(h => h.Accomodations)
             .ThenInclude(a => a.Occupancies)
-            .Include(h => h.CityNavigation)
-            .ThenInclude(c => c.CountryNavigation)
-            .Where(h => h.CityNavigation.CountryNavigation.Name.ToLower() == request.Country.ToLower() &&
+            .Include(h => h.City)
+            .ThenInclude(c => c.Country)
+            .Where(h => h.City.Country.Name.ToLower() == request.Country.ToLower() &&
                 h.Accomodations.Any(a => a.Capacity == request.Guests && a.Occupancies.All(occ =>
-                occ.Accomodation == a.Id &&
+                occ.AccomodationId == a.Id &&
                 !(occ.StartDate >= request.StartDate && occ.StartDate < request.EndDate) &&
                 !(occ.EndDate >= request.StartDate && occ.EndDate < request.EndDate))))
             .ToListAsync(cancellationToken);
@@ -39,11 +39,11 @@ public class GetAccomodationsHandler: IRequestHandler<GetAccomodationsRequest, G
             {
                 Id = hotel.Id,
                 CountOfStars = hotel.CountOfStars,
-                LowestPrice = await _context.Accomodations.Where(a => a.Hotel == hotel.Id)
+                LowestPrice = await _context.Accomodations.Where(a => a.HotelId == hotel.Id)
                                                           .Select(a => a.PricePerDay)
                                                           .MinAsync(cancellationToken) * days,
                 Name = hotel.Name,
-                PreviewImage = hotel.PreviewImage
+                PreviewImage = hotel.PreviewImageId
             });
         }
         return result;

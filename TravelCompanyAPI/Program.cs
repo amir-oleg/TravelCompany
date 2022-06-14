@@ -13,6 +13,7 @@ ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddDbContext<TravelCompanyClassicContext>(options => options.UseSqlServer(configuration.GetConnectionString("TravelCompanyDb")));
+builder.Services.AddDbContext<TravelCompanyEAVContext>(options => options.UseSqlServer(configuration.GetConnectionString("TravelCompanyDbEav")));
 builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("AuthDb")));
 
 // For Identity
