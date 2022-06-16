@@ -11,10 +11,13 @@ public class RegisterModel
     [Phone]
     [Required(ErrorMessage = "Phone number is required")]
     public string PhoneNumber { get; set; }
+
     [Required]
     public string FirstName { get; set; }
+
     [Required]
     public string LastName { get; set; }
+
     [Required]
     public string Patronymic { get; set; }
 

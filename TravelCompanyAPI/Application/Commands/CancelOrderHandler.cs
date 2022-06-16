@@ -6,9 +6,9 @@ namespace TravelCompanyAPI.Application.Commands;
 
 public class CancelOrderHandler: IRequestHandler<CancelOrderRequest>
 {
-    private readonly TravelCompanyClassicContext _context;
+    private readonly TravelCompanyEAVContext _context;
 
-    public CancelOrderHandler(TravelCompanyClassicContext context)
+    public CancelOrderHandler(TravelCompanyEAVContext context)
     {
         _context = context;
     }

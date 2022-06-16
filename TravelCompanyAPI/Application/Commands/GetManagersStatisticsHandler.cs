@@ -7,9 +7,9 @@ namespace TravelCompanyAPI.Application.Commands;
 
 public class GetManagersStatisticsHandler: IRequestHandler<GetManagersStatisticsRequest, IEnumerable<GetManagersStatisticsResponse>>
 {
-    private readonly TravelCompanyClassicContext _context;
+    private readonly TravelCompanyEAVContext _context;
 
-    public GetManagersStatisticsHandler(TravelCompanyClassicContext context)
+    public GetManagersStatisticsHandler(TravelCompanyEAVContext context)
     {
         _context = context;
     }

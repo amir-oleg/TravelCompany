@@ -7,9 +7,9 @@ namespace TravelCompanyAPI.Application.Commands;
 
 public class GetFreeOrdersHandler: IRequestHandler<GetFreeOrdersRequest, GetFreeOrdersResponse>
 {
-    private readonly TravelCompanyClassicContext _context;
+    private readonly TravelCompanyEAVContext _context;
 
-    public GetFreeOrdersHandler(TravelCompanyClassicContext context)
+    public GetFreeOrdersHandler(TravelCompanyEAVContext context)
     {
         _context = context;
     }

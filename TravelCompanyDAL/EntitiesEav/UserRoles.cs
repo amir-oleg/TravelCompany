@@ -1,4 +1,4 @@
-﻿namespace TravelCompanyDAL.Entities;
+﻿namespace TravelCompanyDAL.EntitiesEav;
 
 public class UserRoles
 {

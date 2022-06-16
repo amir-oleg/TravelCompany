@@ -8,9 +8,9 @@ namespace TravelCompanyAPI.Controllers;
 [ApiController]
 public class ImagesController : ControllerBase
 {
-    private readonly TravelCompanyClassicContext _context;
+    private readonly TravelCompanyEAVContext _context;
 
-    public ImagesController(TravelCompanyClassicContext context)
+    public ImagesController(TravelCompanyEAVContext context)
     {
         _context = context;
     }

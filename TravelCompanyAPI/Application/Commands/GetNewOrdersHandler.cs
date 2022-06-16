@@ -7,7 +7,7 @@ namespace TravelCompanyAPI.Application.Commands;
 
 public class GetNewOrdersHandler: IRequestHandler<GetNewOrdersRequest, GetNewOrdersResponse>
 {
-    private readonly TravelCompanyClassicContext _context;
+    private readonly TravelCompanyEAVContext _context;
 
     public async Task<GetNewOrdersResponse> Handle(GetNewOrdersRequest request, CancellationToken cancellationToken)
     {

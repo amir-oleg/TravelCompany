@@ -6,9 +6,9 @@ namespace TravelCompanyAPI.Application.Commands;
 
 public class TakeOrderInJobHandler: IRequestHandler<TakeOrderInJobRequest>
 {
-    private readonly TravelCompanyClassicContext _context;
+    private readonly TravelCompanyEAVContext _context;
 
-    public TakeOrderInJobHandler(TravelCompanyClassicContext context)
+    public TakeOrderInJobHandler(TravelCompanyEAVContext context)
     {
         _context = context;
     }

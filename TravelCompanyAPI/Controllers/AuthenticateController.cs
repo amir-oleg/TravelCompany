@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using TravelCompanyAPI.Application.Models;
 using TravelCompanyAPI.Application.Responses;
 using TravelCompanyDAL;
-using TravelCompanyDAL.Entities;
+using TravelCompanyDAL.EntitiesEav;
 
 namespace TravelCompanyAPI.Controllers;
 
@@ -17,13 +17,13 @@ public class AuthenticateController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly TravelCompanyClassicContext _context;
+    private readonly TravelCompanyEAVContext _context;
     private readonly IConfiguration _configuration;
 
     public AuthenticateController(
         UserManager<IdentityUser> userManager, 
         RoleManager<IdentityRole> roleManager,
-        TravelCompanyClassicContext contextClassic, 
+        TravelCompanyEAVContext contextClassic, 
         IConfiguration configuration)
     {
         _userManager = userManager;

@@ -7,9 +7,9 @@ namespace TravelCompanyAPI.Application.Commands;
 
 public class GetPersonalDataHandler: IRequestHandler<GetPersonalDataRequest, GetPersonalResponse>
 {
-    private readonly TravelCompanyClassicContext _context;
+    private readonly TravelCompanyEAVContext _context;
 
-    public GetPersonalDataHandler(TravelCompanyClassicContext context)
+    public GetPersonalDataHandler(TravelCompanyEAVContext context)
     {
         _context = context;
     }

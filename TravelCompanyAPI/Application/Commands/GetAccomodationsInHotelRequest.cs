@@ -3,18 +3,12 @@ using TravelCompanyAPI.Application.Responses;
 
 namespace TravelCompanyAPI.Application.Commands;
 
-internal class GetAccomodationsInHotelRequest: IRequest<List<GetAccomodationInHotelResponse>>
+public class GetAccomodationsInHotelRequest: IRequest<List<GetAccomodationsInHotelResponse>>
 {
-    public GetAccomodationsInHotelRequest(int hotelId, DateTime startDate, DateTime endDate, int guests)
+    public GetAccomodationsInHotelRequest(int hotelId)
     {
         HotelId = hotelId;
-        StartDate = startDate;
-        EndDate = endDate;
-        Guests = guests;
     }
 
     public int HotelId { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public int Guests { get; set; }
 }

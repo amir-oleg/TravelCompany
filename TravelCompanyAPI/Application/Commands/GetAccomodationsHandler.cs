@@ -8,9 +8,9 @@ namespace TravelCompanyAPI.Application.Commands;
 
 public class GetAccomodationsHandler: IRequestHandler<GetAccomodationsRequest, GetAccomodationsResponse>
 {
-    private readonly TravelCompanyClassicContext _context;
+    private readonly TravelCompanyEAVContext _context;
 
-    public GetAccomodationsHandler(TravelCompanyClassicContext context)
+    public GetAccomodationsHandler(TravelCompanyEAVContext context)
     {
         _context = context;
     }

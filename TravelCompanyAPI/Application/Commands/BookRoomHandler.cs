@@ -1,15 +1,15 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TravelCompanyDAL;
-using TravelCompanyDAL.Entities;
+using TravelCompanyDAL.EntitiesEav;
 
 namespace TravelCompanyAPI.Application.Commands;
 
 public class BookRoomHandler: IRequestHandler<BookRoomRequest>
 {
-    private readonly TravelCompanyClassicContext _context;
+    private readonly TravelCompanyEAVContext _context;
 
-    public BookRoomHandler(TravelCompanyClassicContext context)
+    public BookRoomHandler(TravelCompanyEAVContext context)
     {
         _context = context;
     }

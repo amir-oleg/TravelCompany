@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TravelCompanyAPI.Application.Commands;
-using TravelCompanyDAL.Entities;
+using TravelCompanyDAL.EntitiesEav;
 
 namespace TravelCompanyAPI.Controllers;
 

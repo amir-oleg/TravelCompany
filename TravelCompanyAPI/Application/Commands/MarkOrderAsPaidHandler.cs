@@ -6,9 +6,9 @@ namespace TravelCompanyAPI.Application.Commands;
 
 public class MarkOrderAsPaidHandler: IRequestHandler<MarkOrderAsPaidRequest>
 {
-    private readonly TravelCompanyClassicContext _context;
+    private readonly TravelCompanyEAVContext _context;
 
-    public MarkOrderAsPaidHandler(TravelCompanyClassicContext context)
+    public MarkOrderAsPaidHandler(TravelCompanyEAVContext context)
     {
         _context = context;
     }
