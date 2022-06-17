@@ -19,8 +19,7 @@ public class GetPersonalDataHandler: IRequestHandler<GetPersonalDataRequest, Get
         var client = await _context.Clients.SingleAsync(cl => cl.Email == request.Email, cancellationToken);
 
         var orders = await _context.Orders
-            .Include(ord => ord.Accomodation)
-            .ThenInclude(acc => acc.Hotel)
+            .Include(ord => ord.Tour)
             .Where(ord => ord.ClientId == client.Id)
             .ToListAsync(cancellationToken);
 
@@ -35,12 +34,11 @@ public class GetPersonalDataHandler: IRequestHandler<GetPersonalDataRequest, Get
         {
             response.Orders.Add(new OrderResponse()
             {
-                AccomodationName = order.Accomodation.Name,
-                HotelName = order.Accomodation.Hotel.Name,
+                TourName = order.Tour.Name,
                 StartDate = order.StartDate.ToString("dd-MM-yyyy"),
                 EndDate = order.EndDate.ToString("dd-MM-yyyy"),
                 Id = order.Id,
-                Price = order.Cost
+                Price = order.Tour.Cost
             });
         }
 

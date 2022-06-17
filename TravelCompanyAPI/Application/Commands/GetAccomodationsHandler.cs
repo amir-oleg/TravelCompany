@@ -17,10 +17,12 @@ public class GetAccomodationsHandler: IRequestHandler<GetAccomodationsRequest, G
 
     public async Task<GetAccomodationsResponse> Handle(GetAccomodationsRequest request, CancellationToken cancellationToken)
     {
-        var hotels = await _context.Hotels.Include(h => h.Accomodations)
+        var hotels = await _context.Hotels
+            .Include(h => h.Accomodations)
             .ThenInclude(a => a.Occupancies)
             .Include(h => h.City)
             .ThenInclude(c => c.Country)
+            .Include(h => h.CategoryCodeNavigation)
             .Where(h => h.City.Country.Name.ToLower() == request.Country.ToLower() &&
                 h.Accomodations.Any(a => a.Capacity == request.Guests && a.Occupancies.All(occ =>
                 occ.AccomodationId == a.Id &&
@@ -38,7 +40,9 @@ public class GetAccomodationsHandler: IRequestHandler<GetAccomodationsRequest, G
             result.Hotels.Add(new HotelDto()
             {
                 Id = hotel.Id,
-                CountOfStars = hotel.CountOfStars,
+                Category = hotel.CategoryCodeNavigation.Value,
+                City = hotel.City.Name,
+                Country = hotel.City.Country.Name,
                 LowestPrice = await _context.Accomodations.Where(a => a.HotelId == hotel.Id)
                                                           .Select(a => a.PricePerDay)
                                                           .MinAsync(cancellationToken) * days,

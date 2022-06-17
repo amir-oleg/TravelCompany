@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TravelCompanyAPI.Application.Commands;
-using TravelCompanyAPI.Application.Models;
-using TravelCompanyDAL.EntitiesEav;
+using TravelCompanyDAL.Entities;
 
 namespace TravelCompanyAPI.Controllers;
 
@@ -17,17 +16,6 @@ public class OrdersController : ControllerBase
     public OrdersController(IMediator mediator)
     {
         _mediator = mediator;
-    }
-
-    [HttpPost]
-    [Authorize(Roles = UserRoles.User)]
-    [Route("create")]
-    public async Task<IActionResult> BookRoom([FromBody] CreateOrderDto request, CancellationToken cancellationToken)
-    {
-        var email = User.Claims.Single(cl => cl.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").Value;
-        await _mediator.Send(new BookRoomRequest(email, request.StartDate, request.EndDate, request.AccomodationId), cancellationToken);
-
-        return Ok();
     }
 
     [HttpPost]

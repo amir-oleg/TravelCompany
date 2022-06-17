@@ -19,8 +19,7 @@ public class GetManagerDataHandler: IRequestHandler<GetManagerDataRequest, GetMa
         var employee = await _context.Employees.SingleAsync(cl => cl.Email == request.Email, cancellationToken);
 
         var orders = await _context.Orders
-            .Include(ord => ord.Accomodation)
-            .ThenInclude(acc => acc.Hotel)
+            .Include(ord => ord.Tour)
             .Include(ord => ord.Client)
             .Where(ord => ord.EmployeeId == employee.Id)
             .ToListAsync(cancellationToken);
@@ -36,12 +35,11 @@ public class GetManagerDataHandler: IRequestHandler<GetManagerDataRequest, GetMa
         {
             response.Orders.Add(new ManagerOrderResponse()
             {
-                AccomodationName = order.Accomodation.Name,
-                HotelName = order.Accomodation.Hotel.Name,
+                TourName = order.Tour.Name,
                 StartDate = order.StartDate.ToString("dd-MM-yyyy"),
                 EndDate = order.EndDate.ToString("dd-MM-yyyy"),
                 Id = order.Id,
-                Price = order.Cost,
+                Price = order.Tour.Cost,
                 ClientName = order.Client.FirstName,
                 ClientPhoneNumber = order.Client.Phone,
                 IsPaid = order.IsPaid

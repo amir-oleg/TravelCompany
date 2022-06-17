@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TravelCompanyDAL;
-using TravelCompanyDAL.EntitiesEav;
+using TravelCompanyDAL.Entities;
 
 namespace TravelCompanyAPI.Application.Commands;
 

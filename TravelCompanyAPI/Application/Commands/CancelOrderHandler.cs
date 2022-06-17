@@ -15,13 +15,19 @@ public class CancelOrderHandler: IRequestHandler<CancelOrderRequest>
 
     public async Task<Unit> Handle(CancelOrderRequest request, CancellationToken cancellationToken)
     {
-        var order = await _context.Orders.SingleAsync(ord => ord.Id == request.OrderId, cancellationToken);
-        var occupancy = await _context.Occupancies.SingleAsync(
-            occ => occ.AccomodationId == order.AccomodationId && occ.StartDate == order.StartDate &&
-                   occ.EndDate == order.EndDate, cancellationToken);
+        var order = await _context.Orders
+            .Include(ord => ord.Tour)
+            .ThenInclude(tour => tour.Accomodations)
+            .SingleAsync(ord => ord.Id == request.OrderId, cancellationToken);
+        var ids = order.Tour.Accomodations.Select(acc => acc.Id).ToList();
+        var occupancies = await _context.Occupancies
+            .Where(
+                occ => ids.Contains(occ.AccomodationId) && occ.StartDate == order.StartDate &&
+                       occ.EndDate == order.EndDate)
+            .ToListAsync(cancellationToken);
 
         _context.Orders.Remove(order);
-        _context.Occupancies.Remove(occupancy);
+        _context.Occupancies.RemoveRange(occupancies);
 
         await _context.SaveChangesAsync(cancellationToken);
 

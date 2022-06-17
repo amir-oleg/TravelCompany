@@ -17,13 +17,18 @@ public class GetHotelEavHandler: IRequestHandler<GetHotelEavRequest, GetHotelEav
     public async Task<GetHotelEavResponse> Handle(GetHotelEavRequest request, CancellationToken cancellationToken)
     {
         var hotel = await _context.Hotels
+            .Include(hotel => hotel.CategoryCodeNavigation)
+            .Include(hotel => hotel.City)
+                .ThenInclude(city => city.Country)
             .Include(hotel => hotel.ValuesHotelsAttributes)
-            .ThenInclude(vha => vha.HotelAttribute)
+                .ThenInclude(vha => vha.HotelAttribute)
             .FirstOrDefaultAsync(h => h.Id == request.HotelId, cancellationToken);
 
         var response = new GetHotelEavResponse
         {
-            CountOfStars = hotel.CountOfStars,
+            Category = hotel.CategoryCodeNavigation.Value,
+            City = hotel.City.Name,
+            Country = hotel.City.Country.Name,
             HotelName = hotel.Name,
             PreviewImage = hotel.PreviewImageId
         };

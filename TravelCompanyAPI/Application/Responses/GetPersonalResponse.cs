@@ -11,8 +11,7 @@ public class GetPersonalResponse
 public class OrderResponse
 {
     public int Id { get; set; }
-    public string HotelName { get; set; }
-    public string AccomodationName { get; set; }
+    public string TourName { get; set; }
     public string StartDate { get; set; }
     public string EndDate { get; set; }
     public decimal Price { get; set; }

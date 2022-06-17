@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TravelCompanyAPI.Application.Commands;
 using TravelCompanyAPI.Application.Models;
 using TravelCompanyAPI.Application.Responses;
-using TravelCompanyDAL.EntitiesEav;
+using TravelCompanyDAL.Entities;
 
 namespace TravelCompanyAPI.Controllers;
 
@@ -86,6 +86,19 @@ public class HotelsController : ControllerBase
     public async Task<IActionResult> UpdateHotelAttribute(int id, [FromBody] UpdateAttributeDto request, CancellationToken cancellationToken)
     {
         await _mediator.Send(new UpdateHotelAttributeRequest(request.Name, request.Value, request.MeasureOfUnit, id), cancellationToken);
+
+        return Ok();
+    }
+
+    [HttpPost]
+    [Route("add")]
+    [Authorize(Roles = UserRoles.Admin)]
+    public async Task<IActionResult> AddHotel([FromBody] AddHotelDto request, CancellationToken cancellationToken)
+    {
+        var imageBytes = Convert.FromBase64String(request.PreviewImageBase64);
+        await _mediator.Send(
+            new AddHotelRequest(request.HotelName, request.CategoreCode, request.City, request.Country,
+                request.TypeOfAccommodation, imageBytes), cancellationToken);
 
         return Ok();
     }

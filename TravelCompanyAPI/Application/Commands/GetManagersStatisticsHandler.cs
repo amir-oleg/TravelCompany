@@ -17,9 +17,10 @@ public class GetManagersStatisticsHandler: IRequestHandler<GetManagersStatistics
     public async Task<IEnumerable<GetManagersStatisticsResponse>> Handle(GetManagersStatisticsRequest request, CancellationToken cancellationToken)
     {
         var managerStats = await _context.Orders
+            .Include(order => order.Tour)
             .Where(ord => ord.IsPaid && ord.EmployeeId != null)
             .GroupBy(ord => ord.EmployeeId)
-            .Select(ord => new { ord.Key, Income = ord.Sum(ord => ord.Cost) })
+            .Select(ord => new { ord.Key, Income = ord.Sum(ord => ord.Tour.Cost) })
             .ToListAsync(cancellationToken);
 
         var managers = await _context.Employees

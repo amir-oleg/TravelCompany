@@ -9,11 +9,15 @@ public class GetNewOrdersHandler: IRequestHandler<GetNewOrdersRequest, GetNewOrd
 {
     private readonly TravelCompanyEAVContext _context;
 
+    public GetNewOrdersHandler(TravelCompanyEAVContext context)
+    {
+        _context = context;
+    }
+
     public async Task<GetNewOrdersResponse> Handle(GetNewOrdersRequest request, CancellationToken cancellationToken)
     {
         var orders = await _context.Orders
-            .Include(ord => ord.Accomodation)
-            .ThenInclude(acc => acc.Hotel)
+            .Include(ord => ord.Tour)
             .Include(ord => ord.Client)
             .Where(ord => ord.EmployeeId == null)
             .ToListAsync(cancellationToken);
@@ -24,12 +28,11 @@ public class GetNewOrdersHandler: IRequestHandler<GetNewOrdersRequest, GetNewOrd
         {
             response.Orders.Add(new ManagerOrderResponse()
             {
-                AccomodationName = order.Accomodation.Name,
-                HotelName = order.Accomodation.Hotel.Name,
+                TourName = order.Tour.Name,
                 StartDate = order.StartDate.ToString("dd-MM-yyyy"),
                 EndDate = order.EndDate.ToString("dd-MM-yyyy"),
                 Id = order.Id,
-                Price = order.Cost,
+                Price = order.Tour.Cost,
                 ClientName = order.Client.FirstName,
                 ClientPhoneNumber = order.Client.Phone
             });

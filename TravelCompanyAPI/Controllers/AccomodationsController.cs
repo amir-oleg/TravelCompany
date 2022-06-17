@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TravelCompanyAPI.Application.Commands;
 using TravelCompanyAPI.Application.Models;
 using TravelCompanyAPI.Application.Responses;
-using TravelCompanyDAL.EntitiesEav;
+using TravelCompanyDAL.Entities;
 
 namespace TravelCompanyAPI.Controllers;
 

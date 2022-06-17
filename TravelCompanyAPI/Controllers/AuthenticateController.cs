@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using TravelCompanyAPI.Application.Models;
 using TravelCompanyAPI.Application.Responses;
 using TravelCompanyDAL;
-using TravelCompanyDAL.EntitiesEav;
+using TravelCompanyDAL.Entities;
 
 namespace TravelCompanyAPI.Controllers;
 
