@@ -1,15 +1,14 @@
-﻿namespace TravelCompanyDAL.Entities
+﻿namespace TravelCompanyDAL.Entities;
+
+public partial class Country
 {
-    public partial class Country
+    public Country()
     {
-        public Country()
-        {
-            Cities = new HashSet<City>();
-        }
-
-        public int Id { get; set; }
-        public string Name { get; set; } = null!;
-
-        public virtual ICollection<City> Cities { get; set; }
+        Cities = new HashSet<City>();
     }
+
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+
+    public virtual ICollection<City> Cities { get; set; }
 }

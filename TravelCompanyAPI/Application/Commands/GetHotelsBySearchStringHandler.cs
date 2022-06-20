@@ -17,7 +17,7 @@ public class GetHotelsBySearchStringHandler: IRequestHandler<GetHotelsBySearchSt
 
     public async Task<GetHotelsBySearchStringResponse> Handle(GetHotelsBySearchStringRequest request, CancellationToken cancellationToken)
     {
-        var thisMany = (request.Page - 1) * Consts.PageSize;
+        var thisMany = (request.Page - 1) * GeneralConsts.PageSize;
 
         var hotels = _context.Hotels
             .Include(hotel => hotel.City)
@@ -29,7 +29,7 @@ public class GetHotelsBySearchStringHandler: IRequestHandler<GetHotelsBySearchSt
         double count = await hotels.CountAsync(cancellationToken);
 
         var results = await hotels.Skip(thisMany)
-            .Take(Consts.PageSize)
+            .Take(GeneralConsts.PageSize)
             .AsNoTracking()
             .Select(hotel => new
             {
@@ -47,7 +47,7 @@ public class GetHotelsBySearchStringHandler: IRequestHandler<GetHotelsBySearchSt
                 Name = hotel.Name,
                 PreviewImage = hotel.PreviewImageId
             }).ToList(),
-            PageCount = (int)Math.Ceiling(count / Consts.PageSize)
+            PageCount = (int)Math.Ceiling(count / GeneralConsts.PageSize)
         };
     }
 }

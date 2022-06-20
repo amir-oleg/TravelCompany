@@ -91,14 +91,13 @@ public class HotelsController : ControllerBase
     }
 
     [HttpPost]
-    [Route("add")]
+    [Route("hotel")]
     [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> AddHotel([FromBody] AddHotelDto request, CancellationToken cancellationToken)
     {
         var imageBytes = Convert.FromBase64String(request.PreviewImageBase64);
         await _mediator.Send(
-            new AddHotelRequest(request.HotelName, request.CategoreCode, request.City, request.Country,
-                request.TypeOfAccommodation, imageBytes), cancellationToken);
+            new AddHotelRequest(request.HotelName, request.CategoryCode, request.City, request.PreviewImageBase64, request.HotelAttributes, request.Accomodations), cancellationToken);
 
         return Ok();
     }

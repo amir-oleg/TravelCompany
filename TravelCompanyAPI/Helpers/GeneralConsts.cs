@@ -1,6 +1,6 @@
 ﻿namespace TravelCompanyAPI.Helpers;
 
-public class Consts
+public class GeneralConsts
 {
     public const int PageSize = 30;
 }

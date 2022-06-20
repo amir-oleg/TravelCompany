@@ -30,10 +30,20 @@ public partial class TravelCompanyEAVContext : DbContext
     public virtual DbSet<Tour> Tours { get; set; } = null!;
     public virtual DbSet<TourCategory> TourCategories { get; set; } = null!;
     public virtual DbSet<ToursAttribute> ToursAttributes { get; set; } = null!;
+    public virtual DbSet<TrasnportType> TrasnportTypes { get; set; } = null!;
     public virtual DbSet<ValuesAccomodationAttribute> ValuesAccomodationAttributes { get; set; } = null!;
     public virtual DbSet<ValuesHotelsAttribute> ValuesHotelsAttributes { get; set; } = null!;
     public virtual DbSet<ValuesToursAttribute> ValuesToursAttributes { get; set; } = null!;
     public virtual DbSet<Way> Ways { get; set; } = null!;
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+            optionsBuilder.UseSqlServer("Server=BULL-PC\\SQLEXPRESS;Database=TravelCompanyEAV;Trusted_Connection=True;");
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -251,10 +261,6 @@ public partial class TravelCompanyEAVContext : DbContext
 
         modelBuilder.Entity<Tour>(entity =>
         {
-            entity.Property(e => e.CategoryCode)
-                .HasMaxLength(2)
-                .IsFixedLength();
-
             entity.Property(e => e.Cost).HasColumnType("money");
 
             entity.Property(e => e.DietCode)
@@ -263,24 +269,29 @@ public partial class TravelCompanyEAVContext : DbContext
 
             entity.Property(e => e.Name).HasMaxLength(255);
 
+            entity.HasOne(d => d.Accomodation)
+                .WithMany(p => p.Tours)
+                .HasForeignKey(d => d.AccomodationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Tours_Accomodations");
+
             entity.HasOne(d => d.DietCodeNavigation)
                 .WithMany(p => p.Tours)
                 .HasForeignKey(d => d.DietCode)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Tours_DietTypes");
 
-            entity.HasMany(d => d.Accomodations)
+            entity.HasOne(d => d.PreviewImage)
                 .WithMany(p => p.Tours)
-                .UsingEntity<Dictionary<string, object>>(
-                    "ToursAccomodation",
-                    l => l.HasOne<Accomodation>().WithMany().HasForeignKey("AccomodationId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Tours_Accomodations_Accomodations"),
-                    r => r.HasOne<Tour>().WithMany().HasForeignKey("TourId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Tours_Accomodations_Tours"),
-                    j =>
-                    {
-                        j.HasKey("TourId", "AccomodationId");
+                .HasForeignKey(d => d.PreviewImageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Tours_Images");
 
-                        j.ToTable("Tours_Accomodations");
-                    });
+            entity.HasOne(d => d.Way)
+                .WithMany(p => p.Tours)
+                .HasForeignKey(d => d.WayId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Tours_Ways");
 
             entity.HasMany(d => d.TourCategoryCodes)
                 .WithMany(p => p.Tours)
@@ -295,19 +306,6 @@ public partial class TravelCompanyEAVContext : DbContext
                         j.ToTable("Tours_ToursCategories");
 
                         j.IndexerProperty<string>("TourCategoryCode").HasMaxLength(2).IsFixedLength();
-                    });
-
-            entity.HasMany(d => d.Ways)
-                .WithMany(p => p.Tours)
-                .UsingEntity<Dictionary<string, object>>(
-                    "ToursWay",
-                    l => l.HasOne<Way>().WithMany().HasForeignKey("WayId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Tours_Ways_Ways"),
-                    r => r.HasOne<Tour>().WithMany().HasForeignKey("TourId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Tours_Ways_Tours"),
-                    j =>
-                    {
-                        j.HasKey("TourId", "WayId");
-
-                        j.ToTable("Tours_Ways");
                     });
         });
 
@@ -333,6 +331,20 @@ public partial class TravelCompanyEAVContext : DbContext
                 .HasColumnName("Measure_Unit");
 
             entity.Property(e => e.Name).HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<TrasnportType>(entity =>
+        {
+            entity.HasKey(e => e.Code)
+                .HasName("PK_TrasnportTypes");
+
+            entity.ToTable("Trasnport_Types", "lookup");
+
+            entity.Property(e => e.Code)
+                .HasMaxLength(2)
+                .IsFixedLength();
+
+            entity.Property(e => e.Value).HasMaxLength(255);
         });
 
         modelBuilder.Entity<ValuesAccomodationAttribute>(entity =>
@@ -402,7 +414,9 @@ public partial class TravelCompanyEAVContext : DbContext
 
         modelBuilder.Entity<Way>(entity =>
         {
-            entity.Property(e => e.TransportType).HasMaxLength(255);
+            entity.Property(e => e.TransportTypeCode)
+                .HasMaxLength(2)
+                .IsFixedLength();
 
             entity.HasOne(d => d.EndCity)
                 .WithMany(p => p.WayEndCities)
@@ -415,6 +429,12 @@ public partial class TravelCompanyEAVContext : DbContext
                 .HasForeignKey(d => d.StartCityId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Ways_Cities");
+
+            entity.HasOne(d => d.TransportTypeCodeNavigation)
+                .WithMany(p => p.Ways)
+                .HasForeignKey(d => d.TransportTypeCode)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Ways_Trasnport_Types");
         });
 
         OnModelCreatingPartial(modelBuilder);

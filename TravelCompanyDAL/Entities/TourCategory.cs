@@ -1,15 +1,14 @@
-﻿namespace TravelCompanyDAL.Entities
+﻿namespace TravelCompanyDAL.Entities;
+
+public partial class TourCategory
 {
-    public partial class TourCategory
+    public TourCategory()
     {
-        public TourCategory()
-        {
-            Tours = new HashSet<Tour>();
-        }
-
-        public string Code { get; set; } = null!;
-        public string Value { get; set; } = null!;
-
-        public virtual ICollection<Tour> Tours { get; set; }
+        Tours = new HashSet<Tour>();
     }
+
+    public string Code { get; set; } = null!;
+    public string Value { get; set; } = null!;
+
+    public virtual ICollection<Tour> Tours { get; set; }
 }
