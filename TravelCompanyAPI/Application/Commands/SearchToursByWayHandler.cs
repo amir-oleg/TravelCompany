@@ -30,6 +30,7 @@ public class SearchToursByWayHandler: IRequestHandler<SearchToursByWayRequest, S
             .Include(tour => tour.Accomodation)
             .ThenInclude(acc => acc.Occupancies)
             .Include(tour => tour.Accomodation)
+            .ThenInclude(acc => acc.Type)
             .ThenInclude(acc => acc.Hotel)
             .Include(tour => tour.TourCategoryCodes)
             .Include(tour => tour.DietCodeNavigation)
@@ -37,7 +38,7 @@ public class SearchToursByWayHandler: IRequestHandler<SearchToursByWayRequest, S
                            tour.Cost <= request.PriceTo && tour.GuestsCount == request.GuestsCount &&
                            tour.ChildrenCount == request.ChildrenCount && request.DietTypes.Contains(tour.DietCode) &&
                            tour.TourCategoryCodes.Any(tc => request.TourCategories.Contains(tc.Code)) &&
-                           request.HotelCategories.Contains(tour.Accomodation.Hotel.CategoryCode) &&
+                           request.HotelCategories.Contains(tour.Accomodation.Type.Hotel.CategoryCode) &&
                            (tour.Way.StartCity.Name.ToLower() == request.StartPlace &&
                             tour.Way.EndCity.Name.ToLower() == request.EndPlace ||
                             tour.Way.StartCity.Name.ToLower() == request.StartPlace &&

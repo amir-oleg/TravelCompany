@@ -24,24 +24,29 @@ public class GetTourByIdHandler: IRequestHandler<GetTourByIdRequest, GetTourById
                 .ThenInclude(way => way.EndCity)
                     .ThenInclude(endCity => endCity.Country)
             .Include(tour => tour.Accomodation)
+            .ThenInclude(acc => acc.Type)
                 .ThenInclude(acc => acc.Hotel)
                     .ThenInclude(hotel => hotel.CategoryCodeNavigation)
             .Include(tour => tour.Accomodation)
+            .ThenInclude(acc => acc.Type)
                 .ThenInclude(acc => acc.Hotel)
                     .ThenInclude(hotel => hotel.City)
                         .ThenInclude(city => city.Country)
             .Include(tour => tour.Accomodation)
+            .ThenInclude(acc => acc.Type)
                 .ThenInclude(acc => acc.Hotel)
                     .ThenInclude(hotel => hotel.ValuesHotelsAttributes)
                         .ThenInclude(val =>val.HotelAttribute)
             .Include(tour => tour.Accomodation)
+            .ThenInclude(acc => acc.Type)
                 .ThenInclude(acc => acc.ValuesAccomodationAttributes)
                     .ThenInclude(val => val.AccomodationAttribute)
             .Include(tour => tour.Accomodation)
+            .ThenInclude(acc => acc.Type)
                 .ThenInclude(acc => acc.Images)
             .Include(tour => tour.TourCategoryCodes)
             .Include(tour => tour.DietCodeNavigation)
-            .Include(acc => acc.ValuesToursAttributes)
+            .Include(tour => tour.ValuesTourAttributes)
                 .ThenInclude(vaa => vaa.TourAttribute)
             .SingleAsync(tour => tour.Id == request.TourId, cancellationToken);
 
@@ -59,7 +64,7 @@ public class GetTourByIdHandler: IRequestHandler<GetTourByIdRequest, GetTourById
             ChildrenCount = tour.ChildrenCount,
             Days = tour.Days,
             PreviewImageId = tour.PreviewImageId,
-            Services = tour.ValuesToursAttributes.Select(val => new ServiceResponse()
+            Services = tour.ValuesTourAttributes.Select(val => new ServiceResponse()
             {
                 Name = val.TourAttribute.Name,
                 MeasureOfUnit = val.TourAttribute.MeasureUnit,
@@ -67,26 +72,26 @@ public class GetTourByIdHandler: IRequestHandler<GetTourByIdRequest, GetTourById
             }).ToList(),
             Accomodation = new HotelWithAccResponse()
             {
-                HotelName = tour.Accomodation.Hotel.Name,
-                Category = tour.Accomodation.Hotel.CategoryCodeNavigation.Value,
-                City = tour.Accomodation.Hotel.City.Name,
-                Country = tour.Accomodation.Hotel.City.Country.Name,
-                HotelPreviewImageId = tour.Accomodation.Hotel.PreviewImageId.Value,
-                AccomodationName = tour.Accomodation.Name,
-                Capacity = tour.Accomodation.Capacity,
-                HotelServices = tour.Accomodation.Hotel.ValuesHotelsAttributes.Select(val => new ServiceResponse()
+                HotelName = tour.Accomodation.Type.Hotel.Name,
+                Category = tour.Accomodation.Type.Hotel.CategoryCodeNavigation.Value,
+                City = tour.Accomodation.Type.Hotel.City.Name,
+                Country = tour.Accomodation.Type.Hotel.City.Country.Name,
+                HotelPreviewImageId = tour.Accomodation.Type.Hotel.PreviewImageId.Value,
+                AccomodationName = tour.Accomodation.Type.Name,
+                Capacity = tour.Accomodation.Type.Capacity,
+                HotelServices = tour.Accomodation.Type.Hotel.ValuesHotelsAttributes.Select(val => new ServiceResponse()
                 {
                     Name = val.HotelAttribute.Name,
                     MeasureOfUnit = val.HotelAttribute.MeasureUnit,
                     Value = val.Value
                 }).ToList(),
-                AccomodationServices = tour.Accomodation.ValuesAccomodationAttributes.Select(val => new ServiceResponse()
+                AccomodationServices = tour.Accomodation.Type.ValuesAccomodationAttributes.Select(val => new ServiceResponse()
                 {
                     Name = val.AccomodationAttribute.Name,
                     MeasureOfUnit = val.AccomodationAttribute.MeasureUnit,
                     Value = val.Value
                 }).ToList(),
-                AccomodationImages = tour.Accomodation.Images.Select(img => img.Id)
+                AccomodationImages = tour.Accomodation.Type.Images.Select(img => img.Id)
             }
         };
     }

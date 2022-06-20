@@ -16,17 +16,18 @@ public class GetAccomodationsInHotelEavHandler: IRequestHandler<GetAccomodations
 
     public async Task<List<GetAccomodationsInHotelEavResponse>> Handle(GetAccomodationsInHotelEavRequest request, CancellationToken cancellationToken)
     {
-        var accomodations = await _context.Accomodations
-            .Include(acc => acc.Occupancies)
+        var accomodations = await _context.AccomodationTypes
+            .Include(act => act.Accomodations)
+            .ThenInclude(acc => acc.Occupancies)
             .Include(acc => acc.Images)
             .Include(acc => acc.ValuesAccomodationAttributes)
             .ThenInclude(vaa => vaa.AccomodationAttribute)
-            .Where(acc => acc.HotelId == request.HotelId &&
-                          acc.Capacity == request.Guests &&
-                          acc.Occupancies.All(occ =>
+            .Where(act => act.HotelId == request.HotelId &&
+                          act.Capacity == request.Guests &&
+                          act.Accomodations.Any(acc => acc.Occupancies.All(occ =>
                               occ.AccomodationId == acc.Id &&
                               !(occ.StartDate >= request.StartDate && occ.StartDate < request.EndDate) &&
-                              !(occ.EndDate >= request.StartDate && occ.EndDate < request.EndDate)))
+                              !(occ.EndDate >= request.StartDate && occ.EndDate < request.EndDate))))
             .Select(acc => new
             {
                 acc.Id,

@@ -17,6 +17,7 @@ public class AddAccomodation
     public string Name { get; set; }
     public int Capacity { get; set; }
     public decimal PricePerDay { get; set; }
+    public int Count { get; set; }
     public string[] Images { get; set; }
     public ServiceResponse[] Attributes { get; set; }
 }

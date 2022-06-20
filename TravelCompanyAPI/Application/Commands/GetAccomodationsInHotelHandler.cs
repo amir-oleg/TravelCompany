@@ -16,8 +16,9 @@ public class GetAccomodationsInHotelHandler:IRequestHandler<GetAccomodationsInHo
 
     public async Task<List<GetAccomodationsInHotelResponse>> Handle(GetAccomodationsInHotelRequest request, CancellationToken cancellationToken)
     {
-        var accomodations = await _context.Accomodations
-            .Include(acc => acc.Occupancies)
+        var accomodations = await _context.AccomodationTypes
+            .Include(act => act.Accomodations)
+            .ThenInclude(acc => acc.Occupancies)
             .Include(acc => acc.Images)
             .Include(acc => acc.ValuesAccomodationAttributes)
             .ThenInclude(vaa => vaa.AccomodationAttribute)

@@ -50,7 +50,7 @@ public class AddTourHandler:IRequestHandler<AddTourRequest>
         var attributes = await _context.ToursAttributes
             .Where(att => attNames.Contains(att.Name.ToLower())).AsNoTracking().ToListAsync(cancellationToken);
 
-        var tourAttributes = new List<ValuesToursAttribute>();
+        var tourAttributes = new List<ValuesTourAttribute>();
         var remainAtts = request.Attributtes.ToList();
         foreach (var attribute in attributes)
         {
@@ -59,7 +59,7 @@ public class AddTourHandler:IRequestHandler<AddTourRequest>
             attribute.Name = reqAtt.Name;
             attribute.MeasureUnit = reqAtt.MeasureOfUnit;
 
-            tourAttributes.Add( new ValuesToursAttribute()
+            tourAttributes.Add( new ValuesTourAttribute()
             {
                 TourAttributeId = attribute.Id,
                 Value = reqAtt.Value
@@ -68,7 +68,7 @@ public class AddTourHandler:IRequestHandler<AddTourRequest>
 
         foreach (var att in remainAtts)
         {
-            tourAttributes.Add(new ValuesToursAttribute()
+            tourAttributes.Add(new ValuesTourAttribute()
             {
                 Value = att.Value,
                 TourAttribute = new ToursAttribute()
@@ -79,7 +79,7 @@ public class AddTourHandler:IRequestHandler<AddTourRequest>
             });
         }
 
-        tour.ValuesToursAttributes = tourAttributes;
+        tour.ValuesTourAttributes = tourAttributes;
 
         _context.Tours.Add(tour);
         await _context.SaveChangesAsync(cancellationToken);

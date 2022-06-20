@@ -56,7 +56,7 @@ public class ConstsController : ControllerBase
     [Route("accomodations/{hotelId:int}")]
     public async Task<IActionResult> GetAccomodations(int hotelId, CancellationToken cancellationToken)
     {
-        var response = await _context.Accomodations.Where(acc => acc.HotelId == hotelId)
+        var response = await _context.AccomodationTypes.Where(acc => acc.HotelId == hotelId)
             .Select(acc => new { acc.Id, acc.Name }).AsNoTracking().ToListAsync(cancellationToken);
 
         return Ok(response);

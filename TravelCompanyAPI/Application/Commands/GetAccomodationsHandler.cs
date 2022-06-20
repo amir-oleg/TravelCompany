@@ -18,18 +18,21 @@ public class GetAccomodationsHandler: IRequestHandler<GetAccomodationsRequest, G
     public async Task<GetAccomodationsResponse> Handle(GetAccomodationsRequest request, CancellationToken cancellationToken)
     {
         var hotels = await _context.Hotels
-            .Include(h => h.Accomodations)
+            .Include(h => h.AccomodationTypes)
+            .ThenInclude(act => act.Accomodations)
             .ThenInclude(a => a.Occupancies)
             .Include(h => h.City)
             .ThenInclude(c => c.Country)
             .Include(h => h.CategoryCodeNavigation)
             .Where(h => h.City.Country.Name.ToLower() == request.Country.ToLower() &&
-                h.Accomodations.Any(a => a.Capacity == request.Guests && a.Occupancies.All(occ =>
-                occ.AccomodationId == a.Id &&
-                !(occ.StartDate >= request.StartDate && occ.StartDate < request.EndDate) &&
-                !(occ.EndDate >= request.StartDate && occ.EndDate < request.EndDate))))
+                h.AccomodationTypes.Any(a => a.Capacity == request.Guests))
             .ToListAsync(cancellationToken);
 
+        hotels = hotels.Where(h => h.AccomodationTypes.Any(act => act.Accomodations.Any(acc =>
+            acc.Occupancies.All(occ =>
+                occ.AccomodationId == acc.Id &&
+                !(occ.StartDate >= request.StartDate && occ.StartDate < request.EndDate) &&
+                !(occ.EndDate >= request.StartDate && occ.EndDate < request.EndDate))))).ToList();
 
         var result = new GetAccomodationsResponse();
 
@@ -43,7 +46,7 @@ public class GetAccomodationsHandler: IRequestHandler<GetAccomodationsRequest, G
                 Category = hotel.CategoryCodeNavigation.Value,
                 City = hotel.City.Name,
                 Country = hotel.City.Country.Name,
-                LowestPrice = await _context.Accomodations.Where(a => a.HotelId == hotel.Id)
+                LowestPrice = await _context.AccomodationTypes.Where(a => a.HotelId == hotel.Id)
                                                           .Select(a => a.PricePerDay)
                                                           .MinAsync(cancellationToken) * days,
                 Name = hotel.Name,
