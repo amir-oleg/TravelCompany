@@ -4,7 +4,7 @@ public partial class Hotel
 {
     public Hotel()
     {
-        Accomodations = new HashSet<Accomodation>();
+        AccomodationTypes = new HashSet<AccomodationType>();
         ValuesHotelsAttributes = new HashSet<ValuesHotelsAttribute>();
     }
 
@@ -17,6 +17,6 @@ public partial class Hotel
     public virtual HotelCategory CategoryCodeNavigation { get; set; } = null!;
     public virtual City City { get; set; } = null!;
     public virtual Image? PreviewImage { get; set; }
-    public virtual ICollection<Accomodation> Accomodations { get; set; }
+    public virtual ICollection<AccomodationType> AccomodationTypes { get; set; }
     public virtual ICollection<ValuesHotelsAttribute> ValuesHotelsAttributes { get; set; }
 }

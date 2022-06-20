@@ -5,7 +5,7 @@ public partial class Tour
     public Tour()
     {
         Orders = new HashSet<Order>();
-        ValuesToursAttributes = new HashSet<ValuesToursAttribute>();
+        ValuesTourAttributes = new HashSet<ValuesTourAttribute>();
         TourCategoryCodes = new HashSet<TourCategory>();
     }
 
@@ -25,7 +25,7 @@ public partial class Tour
     public virtual Image PreviewImage { get; set; } = null!;
     public virtual Way Way { get; set; } = null!;
     public virtual ICollection<Order> Orders { get; set; }
-    public virtual ICollection<ValuesToursAttribute> ValuesToursAttributes { get; set; }
+    public virtual ICollection<ValuesTourAttribute> ValuesTourAttributes { get; set; }
 
     public virtual ICollection<TourCategory> TourCategoryCodes { get; set; }
 }

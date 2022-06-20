@@ -6,6 +6,6 @@ public partial class ValuesAccomodationAttribute
     public int AccomodationAttributeId { get; set; }
     public string Value { get; set; } = null!;
 
-    public virtual Accomodation Accomodation { get; set; } = null!;
+    public virtual AccomodationType Accomodation { get; set; } = null!;
     public virtual AccomodationsAttribute AccomodationAttribute { get; set; } = null!;
 }

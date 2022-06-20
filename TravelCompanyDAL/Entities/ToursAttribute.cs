@@ -4,12 +4,12 @@ public partial class ToursAttribute
 {
     public ToursAttribute()
     {
-        ValuesToursAttributes = new HashSet<ValuesToursAttribute>();
+        ValuesTourAttributes = new HashSet<ValuesTourAttribute>();
     }
 
     public int Id { get; set; }
     public string Name { get; set; } = null!;
     public string? MeasureUnit { get; set; }
 
-    public virtual ICollection<ValuesToursAttribute> ValuesToursAttributes { get; set; }
+    public virtual ICollection<ValuesTourAttribute> ValuesTourAttributes { get; set; }
 }

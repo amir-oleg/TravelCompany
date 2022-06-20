@@ -6,7 +6,7 @@ public partial class Image
     {
         Hotels = new HashSet<Hotel>();
         Tours = new HashSet<Tour>();
-        Accomodations = new HashSet<Accomodation>();
+        Accomodations = new HashSet<AccomodationType>();
     }
 
     public int Id { get; set; }
@@ -15,5 +15,5 @@ public partial class Image
     public virtual ICollection<Hotel> Hotels { get; set; }
     public virtual ICollection<Tour> Tours { get; set; }
 
-    public virtual ICollection<Accomodation> Accomodations { get; set; }
+    public virtual ICollection<AccomodationType> Accomodations { get; set; }
 }

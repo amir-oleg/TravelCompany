@@ -15,6 +15,7 @@ public partial class TravelCompanyEAVContext : DbContext
     }
 
     public virtual DbSet<Accomodation> Accomodations { get; set; } = null!;
+    public virtual DbSet<AccomodationType> AccomodationTypes { get; set; } = null!;
     public virtual DbSet<AccomodationsAttribute> AccomodationsAttributes { get; set; } = null!;
     public virtual DbSet<City> Cities { get; set; } = null!;
     public virtual DbSet<Client> Clients { get; set; } = null!;
@@ -33,28 +34,29 @@ public partial class TravelCompanyEAVContext : DbContext
     public virtual DbSet<TrasnportType> TrasnportTypes { get; set; } = null!;
     public virtual DbSet<ValuesAccomodationAttribute> ValuesAccomodationAttributes { get; set; } = null!;
     public virtual DbSet<ValuesHotelsAttribute> ValuesHotelsAttributes { get; set; } = null!;
-    public virtual DbSet<ValuesToursAttribute> ValuesToursAttributes { get; set; } = null!;
+    public virtual DbSet<ValuesTourAttribute> ValuesTourAttributes { get; set; } = null!;
     public virtual DbSet<Way> Ways { get; set; } = null!;
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-            optionsBuilder.UseSqlServer("Server=BULL-PC\\SQLEXPRESS;Database=TravelCompanyEAV;Trusted_Connection=True;");
-        }
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Accomodation>(entity =>
         {
+            entity.HasOne(d => d.Type)
+                .WithMany(p => p.Accomodations)
+                .HasForeignKey(d => d.TypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Accomodations_Accomodation_Types");
+        });
+
+        modelBuilder.Entity<AccomodationType>(entity =>
+        {
+            entity.ToTable("Accomodation_Types");
+
             entity.Property(e => e.Name).HasMaxLength(255);
 
             entity.Property(e => e.PricePerDay).HasColumnType("money");
 
             entity.HasOne(d => d.Hotel)
-                .WithMany(p => p.Accomodations)
+                .WithMany(p => p.AccomodationTypes)
                 .HasForeignKey(d => d.HotelId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Accomodations_Hotels");
@@ -64,7 +66,7 @@ public partial class TravelCompanyEAVContext : DbContext
                 .UsingEntity<Dictionary<string, object>>(
                     "AccomodationImage",
                     l => l.HasOne<Image>().WithMany().HasForeignKey("ImageId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Accomodation_Images_Images"),
-                    r => r.HasOne<Accomodation>().WithMany().HasForeignKey("AccomodationId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Accomodation_Images_Accomodations"),
+                    r => r.HasOne<AccomodationType>().WithMany().HasForeignKey("AccomodationId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Accomodation_Images_Accomodations"),
                     j =>
                     {
                         j.HasKey("AccomodationId", "ImageId");
@@ -230,7 +232,7 @@ public partial class TravelCompanyEAVContext : DbContext
                 .WithMany(p => p.Occupancies)
                 .HasForeignKey(d => d.AccomodationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Occupancies_Accomodations");
+                .HasConstraintName("FK_Occupancies_Accomodations1");
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -273,7 +275,7 @@ public partial class TravelCompanyEAVContext : DbContext
                 .WithMany(p => p.Tours)
                 .HasForeignKey(d => d.AccomodationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Tours_Accomodations");
+                .HasConstraintName("FK_Tours_Accomodations1");
 
             entity.HasOne(d => d.DietCodeNavigation)
                 .WithMany(p => p.Tours)
@@ -391,25 +393,27 @@ public partial class TravelCompanyEAVContext : DbContext
                 .HasConstraintName("FK_Values_Hotels_Attributes_Hotels");
         });
 
-        modelBuilder.Entity<ValuesToursAttribute>(entity =>
+        modelBuilder.Entity<ValuesTourAttribute>(entity =>
         {
             entity.HasKey(e => new { e.TourId, e.TourAttributeId });
 
-            entity.ToTable("Values_Tours_Attributes");
+            entity.ToTable("Values_Tour_Attributes");
 
             entity.Property(e => e.TourAttributeId).HasColumnName("Tour_AttributeId");
 
+            entity.Property(e => e.Value).IsUnicode(false);
+
             entity.HasOne(d => d.TourAttribute)
-                .WithMany(p => p.ValuesToursAttributes)
+                .WithMany(p => p.ValuesTourAttributes)
                 .HasForeignKey(d => d.TourAttributeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Values_Tours_Attributes_Tours_Attributes");
+                .HasConstraintName("FK_Values_Tour_Attributes_Tours_Attributes");
 
             entity.HasOne(d => d.Tour)
-                .WithMany(p => p.ValuesToursAttributes)
+                .WithMany(p => p.ValuesTourAttributes)
                 .HasForeignKey(d => d.TourId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Values_Tours_Attributes_Tours");
+                .HasConstraintName("FK_Values_Tour_Attributes_Tours");
         });
 
         modelBuilder.Entity<Way>(entity =>
