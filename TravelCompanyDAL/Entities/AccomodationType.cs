@@ -5,6 +5,7 @@ public partial class AccomodationType
     public AccomodationType()
     {
         Accomodations = new HashSet<Accomodation>();
+        Tours = new HashSet<Tour>();
         ValuesAccomodationAttributes = new HashSet<ValuesAccomodationAttribute>();
         Images = new HashSet<Image>();
     }
@@ -17,6 +18,7 @@ public partial class AccomodationType
 
     public virtual Hotel Hotel { get; set; } = null!;
     public virtual ICollection<Accomodation> Accomodations { get; set; }
+    public virtual ICollection<Tour> Tours { get; set; }
     public virtual ICollection<ValuesAccomodationAttribute> ValuesAccomodationAttributes { get; set; }
 
     public virtual ICollection<Image> Images { get; set; }

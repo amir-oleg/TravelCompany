@@ -21,7 +21,7 @@ public class CancelOrderHandler: IRequestHandler<CancelOrderRequest>
 
         var occupancies = await _context.Occupancies
             .SingleAsync(
-                occ => occ.AccomodationId == order.Tour.AccomodationId && occ.StartDate == order.StartDate &&
+                occ => occ.AccomodationId == order.AccomodationId && occ.StartDate == order.StartDate &&
                        occ.EndDate == order.EndDate, cancellationToken);
 
         _context.Orders.Remove(order);

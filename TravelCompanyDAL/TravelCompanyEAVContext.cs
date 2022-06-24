@@ -36,6 +36,7 @@ public partial class TravelCompanyEAVContext : DbContext
     public virtual DbSet<ValuesHotelsAttribute> ValuesHotelsAttributes { get; set; } = null!;
     public virtual DbSet<ValuesTourAttribute> ValuesTourAttributes { get; set; } = null!;
     public virtual DbSet<Way> Ways { get; set; } = null!;
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Accomodation>(entity =>
@@ -243,6 +244,12 @@ public partial class TravelCompanyEAVContext : DbContext
 
             entity.Property(e => e.StartDate).HasColumnType("date");
 
+            entity.HasOne(d => d.Accomodation)
+                .WithMany(p => p.Orders)
+                .HasForeignKey(d => d.AccomodationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Orders_Accomodations");
+
             entity.HasOne(d => d.Client)
                 .WithMany(p => p.Orders)
                 .HasForeignKey(d => d.ClientId)
@@ -257,7 +264,6 @@ public partial class TravelCompanyEAVContext : DbContext
             entity.HasOne(d => d.Tour)
                 .WithMany(p => p.Orders)
                 .HasForeignKey(d => d.TourId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Orders_Tours");
         });
 
@@ -271,11 +277,11 @@ public partial class TravelCompanyEAVContext : DbContext
 
             entity.Property(e => e.Name).HasMaxLength(255);
 
-            entity.HasOne(d => d.Accomodation)
+            entity.HasOne(d => d.AccomodationType)
                 .WithMany(p => p.Tours)
-                .HasForeignKey(d => d.AccomodationId)
+                .HasForeignKey(d => d.AccomodationTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Tours_Accomodations1");
+                .HasConstraintName("FK_Tours_Accomodation_Types");
 
             entity.HasOne(d => d.DietCodeNavigation)
                 .WithMany(p => p.Tours)

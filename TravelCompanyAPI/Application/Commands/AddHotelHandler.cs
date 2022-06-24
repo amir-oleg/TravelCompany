@@ -48,7 +48,7 @@ public class AddHotelHandler:IRequestHandler<AddHotelRequest>
             var remainAtts = request.HotelAttributes.ToList();
             foreach (var attribute in attributes)
             {
-                var reqAtt = request.HotelAttributes.Single(att => att.Name.ToLower() == attribute.Name.ToLower());
+                var reqAtt = request.HotelAttributes.First(att => att.Name.ToLower() == attribute.Name.ToLower());
                 remainAtts.Remove(remainAtts.Find(att => att.Name.ToLower() == reqAtt.Name.ToLower()));
                 attribute.Name = reqAtt.Name;
                 attribute.MeasureUnit = reqAtt.MeasureOfUnit;
@@ -68,7 +68,7 @@ public class AddHotelHandler:IRequestHandler<AddHotelRequest>
                     HotelAttribute = new HotelsAttribute()
                     {
                         Name = att.Name,
-                        MeasureUnit = att.Name
+                        MeasureUnit = att.MeasureOfUnit
                     }
                 });
             }
@@ -90,7 +90,7 @@ public class AddHotelHandler:IRequestHandler<AddHotelRequest>
             var remainAtts = request.Accomodations[accAttsId].Attributes.ToList();
             foreach (var attribute in attributes)
             {
-                var reqAtt = request.Accomodations[accAttsId].Attributes.Single(att => att.Name.ToLower() == attribute.Name.ToLower());
+                var reqAtt = request.Accomodations[accAttsId].Attributes.First(att => att.Name.ToLower() == attribute.Name.ToLower());
                 remainAtts.Remove(remainAtts.Find(att => att.Name.ToLower() == reqAtt.Name.ToLower()));
                 attribute.Name = reqAtt.Name;
                 attribute.MeasureUnit = reqAtt.MeasureOfUnit;
@@ -110,7 +110,7 @@ public class AddHotelHandler:IRequestHandler<AddHotelRequest>
                     AccomodationAttribute = new AccomodationsAttribute()
                     {
                         Name = att.Name,
-                        MeasureUnit = att.Name
+                        MeasureUnit = att.MeasureOfUnit
                     }
                 });
             }
@@ -130,7 +130,10 @@ public class AddHotelHandler:IRequestHandler<AddHotelRequest>
         var list = new List<Accomodation>();
         for (var i = 0; i < count; i++)
         {
-            list.Add(new Accomodation());
+            list.Add(new Accomodation()
+            {
+                Number = i + 1
+            });
         }
         return list;
     }

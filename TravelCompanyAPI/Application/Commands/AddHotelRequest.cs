@@ -12,14 +12,25 @@ public class AddHotelRequest: IRequest
         CategoryCode = categoryCode;
         City = city;
         PreviewImageBytes = Convert.FromBase64String(previewImageBytes);
-        HotelAttributes = hotelAttributes;
+        HotelAttributes = hotelAttributes.Select(att => new ServiceResponse()
+        {
+            Name = att.Name.Trim(),
+            Value = att.Value.Trim(),
+            MeasureOfUnit = att.MeasureOfUnit.Trim()
+        }).ToArray();
         Accomodations = accomodations.Select(acc => new AddAccomodationRequest
         {
             Name = acc.Name,
             Capacity = acc.Capacity,
             PricePerDay = acc.PricePerDay,
             Images = acc.Images.Select(Convert.FromBase64String).ToList(),
-            Attributes = acc.Attributes
+            Attributes = acc.Attributes.Select(att => new ServiceResponse()
+            {
+                Name = att.Name.Trim(),
+                Value = att.Value.Trim(),
+                MeasureOfUnit = att.MeasureOfUnit.Trim()
+            }).ToArray(),
+            Count = acc.Count
         }).ToArray();
     }
 

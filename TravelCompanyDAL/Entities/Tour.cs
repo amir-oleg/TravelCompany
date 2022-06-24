@@ -18,9 +18,9 @@ public partial class Tour
     public string Name { get; set; } = null!;
     public int Days { get; set; }
     public int PreviewImageId { get; set; }
-    public int AccomodationId { get; set; }
+    public int AccomodationTypeId { get; set; }
 
-    public virtual Accomodation Accomodation { get; set; } = null!;
+    public virtual AccomodationType AccomodationType { get; set; } = null!;
     public virtual DietType DietCodeNavigation { get; set; } = null!;
     public virtual Image PreviewImage { get; set; } = null!;
     public virtual Way Way { get; set; } = null!;

@@ -30,7 +30,7 @@ public class AddTourHandler:IRequestHandler<AddTourRequest>
 
         var tour = new Tour()
         {
-            AccomodationId = request.AccomodationId,
+            AccomodationTypeId = request.AccomodationId,
             ChildrenCount = request.ChildrenCount,
             Cost = request.Price,
             Days = request.Days,
@@ -54,7 +54,7 @@ public class AddTourHandler:IRequestHandler<AddTourRequest>
         var remainAtts = request.Attributtes.ToList();
         foreach (var attribute in attributes)
         {
-            var reqAtt = request.Attributtes.Single(att => att.Name.ToLower() == attribute.Name.ToLower());
+            var reqAtt = request.Attributtes.First(att => att.Name.ToLower() == attribute.Name.ToLower());
             remainAtts.Remove(remainAtts.Find(att => att.Name.ToLower() == reqAtt.Name.ToLower()));
             attribute.Name = reqAtt.Name;
             attribute.MeasureUnit = reqAtt.MeasureOfUnit;
@@ -74,7 +74,7 @@ public class AddTourHandler:IRequestHandler<AddTourRequest>
                 TourAttribute = new ToursAttribute()
                 {
                     Name = att.Name,
-                    MeasureUnit = att.Name
+                    MeasureUnit = att.MeasureOfUnit
                 }
             });
         }
