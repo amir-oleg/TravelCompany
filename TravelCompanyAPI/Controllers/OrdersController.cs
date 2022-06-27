@@ -38,65 +38,6 @@ public class OrdersController : ControllerBase
     {
         var response = await _mediator.Send(new GetFreeOrdersRequest(), cancellationToken);
 
-        response = new GetFreeOrdersResponse()
-        {
-            Orders = new List<ManagerOrderResponse>()
-            {
-                new ManagerOrderResponse()
-                {
-                    ClientName = "Петров Петр Петрович",
-                    ClientPhoneNumber = "+795865412132",
-                    StartDate = "21-06-2022",
-                    EndDate = "30-06-2022",
-                    Id = 32,
-                    IsPaid = false,
-                    Price = 154212,
-                    TourName = "Анубис",
-                    HotelName = "SHARMING INN HOTEL",
-                    AccomodationName = "Standart"
-                },
-                new ManagerOrderResponse()
-                {
-                    ClientName = "Иванов Иван Иванович",
-                    ClientPhoneNumber = "+79645487898",
-                    StartDate = "30-06-2022",
-                    EndDate = "07-07-2022",
-                    Id = 37,
-                    IsPaid = false,
-                    Price = 155678,
-                    TourName = "Анубис",
-                    HotelName = "SHARMING INN HOTEL",
-                    AccomodationName = "Standart"
-                },
-                new ManagerOrderResponse()
-                {
-                    ClientName = "Говорун Петр Владимирович",
-                    ClientPhoneNumber = "+795878514132",
-                    StartDate = "23-06-2022",
-                    EndDate = "30-06-2022",
-                    Id = 38,
-                    IsPaid = false,
-                    Price = 60584,
-                    TourName = "Волга",
-                    HotelName = "Саратов",
-                    AccomodationName = "Стандартный"
-                },
-                new ManagerOrderResponse()
-                {
-                    ClientName = "Рябцрв Иван Романович",
-                    ClientPhoneNumber = "+79678547898",
-                    StartDate = "30-06-2022",
-                    EndDate = "07-07-2022",
-                    Id = 45,
-                    IsPaid = false,
-                    Price = 126876,
-                    TourName = "Пирамиды египта",
-                    HotelName = "SHARMING INN HOTEL",
-                    AccomodationName = "Standart"
-                }
-            }
-        };
-
         return Ok(response);
     }
 
