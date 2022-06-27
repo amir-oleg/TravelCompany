@@ -66,7 +66,7 @@ public class AuthenticateController : ControllerBase
     {
         var userExists = await _userManager.FindByEmailAsync(model.Email);
         if (userExists != null)
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Пользователь уже существует!" });
 
         IdentityUser user = new()
         {
@@ -81,7 +81,7 @@ public class AuthenticateController : ControllerBase
         {
             return StatusCode(StatusCodes.Status500InternalServerError,
                 new Response
-                    { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+                    { Status = "Error", Message = "Ошибка! Проверьте детали и повторите попытку." });
         }
 
         if (await _roleManager.RoleExistsAsync(UserRoles.User))
@@ -103,7 +103,7 @@ public class AuthenticateController : ControllerBase
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+        return Ok(new Response { Status = "Success", Message = "Пользователь зарегистрирован!" });
     }
 
     [HttpPost]

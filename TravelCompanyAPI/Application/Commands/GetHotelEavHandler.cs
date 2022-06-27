@@ -14,7 +14,8 @@ public class GetHotelEavHandler: IRequestHandler<GetHotelEavRequest, GetHotelEav
         _context = context;
     }
 
-    public async Task<GetHotelEavResponse> Handle(GetHotelEavRequest request, CancellationToken cancellationToken)
+    public async Task<GetHotelEavResponse> Handle(GetHotelEavRequest request, 
+        CancellationToken cancellationToken)
     {
         var hotel = await _context.Hotels
             .Include(hotel => hotel.CategoryCodeNavigation)

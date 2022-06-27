@@ -10,4 +10,6 @@ public class CreateOrderDto
     public DateTime EndDate { get; set; }
     [Required] 
     public int AccomodationId { get; set; }
+
+    public int TourId { get; set; }
 }

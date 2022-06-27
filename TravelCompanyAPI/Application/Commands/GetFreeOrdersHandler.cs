@@ -18,8 +18,11 @@ public class GetFreeOrdersHandler: IRequestHandler<GetFreeOrdersRequest, GetFree
     {
         var orders = await _context.Orders
             .Include(ord => ord.Tour)
+            .ThenInclude(tour => tour.AccomodationType)
+            .ThenInclude(act => act.Hotel)
             .Include(ord => ord.Client)
             .Where(ord => ord.EmployeeId == null)
+            .AsSplitQuery()
             .ToListAsync(cancellationToken);
 
         var response = new GetFreeOrdersResponse();
@@ -34,7 +37,9 @@ public class GetFreeOrdersHandler: IRequestHandler<GetFreeOrdersRequest, GetFree
                 StartDate = order.StartDate.ToString("dd-MM-yyyy"),
                 EndDate = order.EndDate.ToString("dd-MM-yyyy"),
                 Id = order.Id,
-                Price = order.Tour.Cost
+                Price = order.Tour.Cost,
+                HotelName = order.Tour.AccomodationType.Hotel.Name,
+                AccomodationName = order.Tour.AccomodationType.Name
             });
         }
 
