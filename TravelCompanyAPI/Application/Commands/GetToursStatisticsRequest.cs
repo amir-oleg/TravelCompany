@@ -3,9 +3,9 @@ using TravelCompanyAPI.Application.Responses;
 
 namespace TravelCompanyAPI.Application.Commands;
 
-public class GetManagersStatisticsRequest: IRequest<IEnumerable<GetManagersStatisticsResponse>>
+public class GetToursStatisticsRequest: IRequest<IEnumerable<GetToursStatisticsResponse>>
 {
-    public GetManagersStatisticsRequest(string month)
+    public GetToursStatisticsRequest(string month)
     {
         Month = month;
     }

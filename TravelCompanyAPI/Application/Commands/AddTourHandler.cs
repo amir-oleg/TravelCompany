@@ -39,7 +39,7 @@ public class AddTourHandler:IRequestHandler<AddTourRequest>
             Name = request.Name,
             Way = way,
             TourCategoryCodes = tourCategories,
-            PreviewImage = new Image()
+            PreviewImage = new Image
             {
                 ImageBytes = Convert.FromBase64String(request.Image)
             }
@@ -47,35 +47,36 @@ public class AddTourHandler:IRequestHandler<AddTourRequest>
 
         var attNames = request.Attributtes.Select(att => att.Name.ToLower());
 
-        var attributes = await _context.ToursAttributes
-            .Where(att => attNames.Contains(att.Name.ToLower())).AsNoTracking().ToListAsync(cancellationToken);
+        var existingAttributes = await _context.ToursAttributes
+            .Where(att => attNames.Contains(att.Name.Trim().ToLower())).AsNoTracking().ToListAsync(cancellationToken);
+
+        foreach (var attributte in request.Attributtes)
+        {
+            if (existingAttributes.All(ea => ea.Name.ToLower() != attributte.Name.Trim().ToLower()))
+            {
+                _context.Add(new ToursAttribute
+                {
+                    Name = attributte.Name.Trim(),
+                    MeasureUnit = attributte.MeasureOfUnit.Trim()
+                });
+            }
+        }
+        await _context.SaveChangesAsync(cancellationToken);
+
+
+        existingAttributes = await _context.ToursAttributes
+            .Where(att => attNames.Contains(att.Name.Trim().ToLower())).AsNoTracking().ToListAsync(cancellationToken);
 
         var tourAttributes = new List<ValuesTourAttribute>();
-        var remainAtts = request.Attributtes.ToList();
-        foreach (var attribute in attributes)
+        
+        foreach (var attribute in existingAttributes)
         {
-            var reqAtt = request.Attributtes.First(att => att.Name.ToLower() == attribute.Name.ToLower());
-            remainAtts.Remove(remainAtts.Find(att => att.Name.ToLower() == reqAtt.Name.ToLower()));
-            attribute.Name = reqAtt.Name;
-            attribute.MeasureUnit = reqAtt.MeasureOfUnit;
+            var reqAtt = request.Attributtes.First(att => att.Name.Trim().ToLower() == attribute.Name.ToLower());
 
-            tourAttributes.Add( new ValuesTourAttribute()
+            tourAttributes.Add( new ValuesTourAttribute
             {
                 TourAttributeId = attribute.Id,
-                Value = reqAtt.Value
-            });
-        }
-
-        foreach (var att in remainAtts)
-        {
-            tourAttributes.Add(new ValuesTourAttribute()
-            {
-                Value = att.Value,
-                TourAttribute = new ToursAttribute()
-                {
-                    Name = att.Name,
-                    MeasureUnit = att.MeasureOfUnit
-                }
+                Value = reqAtt.Value.Trim()
             });
         }
 

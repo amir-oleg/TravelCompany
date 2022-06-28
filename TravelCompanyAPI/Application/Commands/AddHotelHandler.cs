@@ -41,83 +41,89 @@ public class AddHotelHandler:IRequestHandler<AddHotelRequest>
         {
             var attNames = request.HotelAttributes.Select(att => att.Name.ToLower());
 
-            var attributes = await _context.HotelsAttributes
-                .Where(att => attNames.Contains(att.Name.ToLower())).AsNoTracking().ToListAsync(cancellationToken);
+            var existingAttributes = await _context.HotelsAttributes
+                .Where(att => attNames.Contains(att.Name.Trim().ToLower())).AsNoTracking().ToListAsync(cancellationToken);
 
-            var hotelAttributes = new List<ValuesHotelsAttribute>();
-            var remainAtts = request.HotelAttributes.ToList();
-            foreach (var attribute in attributes)
+            foreach (var attributte in request.HotelAttributes)
             {
-                var reqAtt = request.HotelAttributes.First(att => att.Name.ToLower() == attribute.Name.ToLower());
-                remainAtts.Remove(remainAtts.Find(att => att.Name.ToLower() == reqAtt.Name.ToLower()));
-                attribute.Name = reqAtt.Name;
-                attribute.MeasureUnit = reqAtt.MeasureOfUnit;
+                if (existingAttributes.All(ea => ea.Name.ToLower() != attributte.Name.Trim().ToLower()))
+                {
+                    _context.Add(new HotelsAttribute
+                    {
+                        Name = attributte.Name.Trim(),
+                        MeasureUnit = attributte.MeasureOfUnit.Trim()
+                    });
+                }
+            }
 
-                hotelAttributes.Add(new ValuesHotelsAttribute()
+            await _context.SaveChangesAsync(cancellationToken);
+
+            existingAttributes = await _context.HotelsAttributes
+                .Where(att => attNames.Contains(att.Name.Trim().ToLower())).AsNoTracking().ToListAsync(cancellationToken);
+
+            var hotelsAttributes = new List<ValuesHotelsAttribute>();
+
+            foreach (var attribute in existingAttributes)
+            {
+                var reqAtt = request.HotelAttributes.First(att => att.Name.Trim().ToLower() == attribute.Name.ToLower());
+
+                hotelsAttributes.Add(new ValuesHotelsAttribute()
                 {
                     HotelAttributeId = attribute.Id,
-                    Value = reqAtt.Value
+                    Value = reqAtt.Value.Trim()
                 });
             }
-
-            foreach (var att in remainAtts)
-            {
-                hotelAttributes.Add(new ValuesHotelsAttribute()
-                {
-                    Value = att.Value,
-                    HotelAttribute = new HotelsAttribute()
-                    {
-                        Name = att.Name,
-                        MeasureUnit = att.MeasureOfUnit
-                    }
-                });
-            }
-
-            hotel.ValuesHotelsAttributes = hotelAttributes;
+            hotel.ValuesHotelsAttributes = hotelsAttributes;
         }
 
-        int accAttsId = 0;
+        foreach (var accomodation in request.Accomodations)
+        {
+            
+            var attNames = accomodation.Attributes.Select(att => att.Name.ToLower());
+
+            var existingAttributes = await _context.AccomodationsAttributes
+                .Where(att => attNames.Contains(att.Name.Trim().ToLower())).AsNoTracking().ToListAsync(cancellationToken);
+
+            foreach (var attributte in accomodation.Attributes)
+            {
+                if (existingAttributes.All(ea => ea.Name.ToLower() != attributte.Name.Trim().ToLower()))
+                {
+                    _context.Add(new HotelsAttribute
+                    {
+                        Name = attributte.Name.Trim(),
+                        MeasureUnit = attributte.MeasureOfUnit.Trim()
+                    });                }
+            }
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        var accAttsId = 0;
 
         foreach (var accomodation in hotel.AccomodationTypes)
         {
-            
+
             var attNames = request.Accomodations[accAttsId].Attributes.Select(att => att.Name.ToLower());
 
-            var attributes = await _context.AccomodationsAttributes
-                .Where(att => attNames.Contains(att.Name.ToLower())).AsNoTracking().ToListAsync(cancellationToken);
+            var existingAttributes = await _context.AccomodationsAttributes
+                .Where(att => attNames.Contains(att.Name.Trim().ToLower())).AsNoTracking().ToListAsync(cancellationToken);
 
             var accAttributes = new List<ValuesAccomodationAttribute>();
-            var remainAtts = request.Accomodations[accAttsId].Attributes.ToList();
-            foreach (var attribute in attributes)
-            {
-                var reqAtt = request.Accomodations[accAttsId].Attributes.First(att => att.Name.ToLower() == attribute.Name.ToLower());
-                remainAtts.Remove(remainAtts.Find(att => att.Name.ToLower() == reqAtt.Name.ToLower()));
-                attribute.Name = reqAtt.Name;
-                attribute.MeasureUnit = reqAtt.MeasureOfUnit;
 
-                accAttributes.Add(new ValuesAccomodationAttribute()
+            foreach (var attribute in existingAttributes)
+            {
+                var reqAtt = request.Accomodations[accAttsId].Attributes.First(att => att.Name.Trim().ToLower() == attribute.Name.ToLower());
+
+                accAttributes.Add(new ValuesAccomodationAttribute
                 {
                     AccomodationAttributeId = attribute.Id,
-                    Value = reqAtt.Value
+                    Value = reqAtt.Value.Trim()
                 });
             }
 
-            foreach (var att in remainAtts)
-            {
-                accAttributes.Add(new ValuesAccomodationAttribute()
-                {
-                    Value = att.Value,
-                    AccomodationAttribute = new AccomodationsAttribute()
-                    {
-                        Name = att.Name,
-                        MeasureUnit = att.MeasureOfUnit
-                    }
-                });
-            }
             accomodation.ValuesAccomodationAttributes = accAttributes;
+
             accAttsId++;
         }
-
         _context.Add(hotel);
 
         await _context.SaveChangesAsync(cancellationToken);

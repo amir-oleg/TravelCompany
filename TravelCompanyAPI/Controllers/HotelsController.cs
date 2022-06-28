@@ -100,4 +100,14 @@ public class HotelsController : ControllerBase
 
         return Ok();
     }
+
+    [HttpGet]
+    [Route("hotel/{id:int}/stats")]
+    [Authorize(Roles = UserRoles.Admin)]
+    public async Task<IActionResult> GetHotelStats(int id, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(new GetHotelStatsRequest(id), cancellationToken);
+
+        return Ok(response);
+    }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TravelCompanyAPI.Application.Commands;
+using TravelCompanyAPI.Application.Models;
 using TravelCompanyAPI.Application.Responses;
 using TravelCompanyDAL.Entities;
 
@@ -50,22 +51,22 @@ public class PersonalCabinetController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("admin")]
     [Authorize(Roles = UserRoles.Admin)]
-    public async Task<IActionResult> GetManagersStatistics(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetManagersStatistics([FromBody] StatsDto statsDto, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new GetManagersStatisticsRequest(), cancellationToken);
+        var response = await _mediator.Send(new GetManagersStatisticsRequest(statsDto.Month), cancellationToken);
 
         return Ok(response);
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("admin/tours")]
     [Authorize(Roles = UserRoles.Admin)]
-    public async Task<IActionResult> GetToursStatistics(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetToursStatistics([FromBody] StatsDto statsDto, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new GetManagersStatisticsRequest(), cancellationToken);
+        var response = await _mediator.Send(new GetToursStatisticsRequest(statsDto.Month), cancellationToken);
         
         return Ok(response);
     }

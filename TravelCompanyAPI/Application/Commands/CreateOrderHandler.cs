@@ -50,6 +50,7 @@ public class CreateOrderHandler:IRequestHandler<CreateOrderRequest>
                         !(occ.EndDate >= request.StartDate && occ.EndDate < request.EndDate))))
                 .Select(tour => new
                     { TypeId = tour.AccomodationTypeId, AccId = tour.AccomodationType.Accomodations.First().Id })
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(cancellationToken);
             occupancy.AccomodationId = ids.AccId;
             order.AccomodationId = ids.TypeId;
