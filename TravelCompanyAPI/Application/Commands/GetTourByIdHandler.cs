@@ -68,6 +68,7 @@ public class GetTourByIdHandler: IRequestHandler<GetTourByIdRequest, GetTourById
             }).ToList(),
             Accomodation = new HotelWithAccResponse()
             {
+                AccomodationId = tour.AccomodationTypeId,
                 HotelName = tour.AccomodationType.Hotel.Name,
                 Category = tour.AccomodationType.Hotel.CategoryCodeNavigation.Value,
                 City = tour.AccomodationType.Hotel.City.Name,
