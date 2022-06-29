@@ -20,6 +20,7 @@ public class GetTourByIdResponse
 
 public class HotelWithAccResponse
 {
+    public int AccomodationId { get; set; }
     public string HotelName { get; set; }
     public string Category { get; set; }
     public string City { get; set; }
