@@ -42,7 +42,7 @@ public class GetAccomodationsInHotelEavHandler: IRequestHandler<GetAccomodations
         var days = (request.EndDate - request.StartDate).Days;
 
         var response = new List<GetAccomodationsInHotelEavResponse>();
-
+        
         foreach (var accomodation in accomodations)
         {
             response.Add(new GetAccomodationsInHotelEavResponse()
@@ -51,12 +51,13 @@ public class GetAccomodationsInHotelEavHandler: IRequestHandler<GetAccomodations
                 Capacity = accomodation.Capacity,
                 Name = accomodation.Name,
                 Price = accomodation.PricePerDay * days,
-                Images = accomodation.Images
+                PricePerDay = accomodation.PricePerDay,
+                Images = accomodation.Images.Select(img => img.ToString())
             });
 
             foreach (var valuesAccomodationAttribute in accomodation.ValuesAccomodationAttributes)
             {
-                response.Last().Services.Add(new ServiceResponse()
+                response.Last().Attributes.Add(new ServiceResponse()
                 {
                     Name = valuesAccomodationAttribute.AccomodationAttribute.Name,
                     MeasureOfUnit = valuesAccomodationAttribute.AccomodationAttribute.MeasureUnit,

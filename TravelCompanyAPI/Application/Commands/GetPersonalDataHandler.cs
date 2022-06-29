@@ -34,11 +34,11 @@ public class GetPersonalDataHandler: IRequestHandler<GetPersonalDataRequest, Get
         {
             response.Orders.Add(new OrderResponse()
             {
-                TourName = order.Tour.Name,
+                TourName = order.Tour?.Name,
                 StartDate = order.StartDate.ToString("dd-MM-yyyy"),
                 EndDate = order.EndDate.ToString("dd-MM-yyyy"),
                 Id = order.Id,
-                Price = order.Tour.Cost
+                IsPaid = order.IsPaid,
             });
         }
 

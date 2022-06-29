@@ -73,7 +73,7 @@ public class HotelsController : ControllerBase
     public async Task<IActionResult> GetHotelsBySearchString([FromQuery] string search, [FromQuery] int page, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(search))
-           return BadRequest();
+            return BadRequest();
 
         var response = await _mediator.Send(new GetHotelsBySearchStringRequest(search, page), cancellationToken);
 
@@ -102,12 +102,22 @@ public class HotelsController : ControllerBase
     }
 
     [HttpGet]
-    [Route("hotel/{id:int}/stats")]
+    [Route("{hotelId:int}/stats")]
     [Authorize(Roles = UserRoles.Admin)]
-    public async Task<IActionResult> GetHotelStats(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetHotelStats(int hotelId, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new GetHotelStatsRequest(id), cancellationToken);
+        var response = await _mediator.Send(new GetHotelStatsRequest(hotelId), cancellationToken);
 
         return Ok(response);
+    }
+
+    [HttpPut]
+    [Route("hotel")]
+    [Authorize(Roles = UserRoles.Admin)]
+    public async Task<IActionResult> EditHotel([FromBody] EditHotelDto request, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new EditHotelRequest(request.Id, request.HotelName, request.CategoryCode, request.City, request.PreviewImageBase64, request.HotelAttributes, request.Accomodations), cancellationToken);
+
+        return Ok();
     }
 }

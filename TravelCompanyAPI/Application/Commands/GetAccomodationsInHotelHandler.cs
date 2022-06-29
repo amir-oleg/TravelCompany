@@ -44,12 +44,13 @@ public class GetAccomodationsInHotelHandler:IRequestHandler<GetAccomodationsInHo
                 Id = accomodation.Id,
                 Capacity = accomodation.Capacity,
                 Name = accomodation.Name,
-                Images = accomodation.Images
+                Images = accomodation.Images.Select(img => img.ToString()),
+                PricePerDay = accomodation.PricePerDay
             });
 
             foreach (var valuesAccomodationAttribute in accomodation.ValuesAccomodationAttributes)
             {
-                response.Last().Services.Add(new ServiceResponse()
+                response.Last().Attributes.Add(new ServiceResponse()
                 {
                     Name = valuesAccomodationAttribute.AccomodationAttribute.Name,
                     MeasureOfUnit = valuesAccomodationAttribute.AccomodationAttribute.MeasureUnit,

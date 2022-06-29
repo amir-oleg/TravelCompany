@@ -6,6 +6,7 @@ public class GetAccomodationsInHotelEavResponse
         public string Name { get; set; }
         public int Capacity { get; set; }
         public decimal Price { get; set; }
-        public List<ServiceResponse> Services { get; set; } = new();
-        public IEnumerable<int> Images { get; set; }
+        public decimal PricePerDay{ get; set;}
+        public List<ServiceResponse> Attributes { get; set; } = new();
+        public IEnumerable<string> Images { get; set; }
 }
